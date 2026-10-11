@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Neural Fidelity Calibration uses conditional diffusion models to calibrate simulation dynamics and adapt robot policies online in challenging real-world conditions.">
+  <title>Neural Fidelity Calibration for Informative Sim-to-Real Adaptation</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,700|Noto+Sans:400,500,600,700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script defer src="./static/js/overview.js"></script>
+  <script defer src="./static/js/media.js"></script>
+  <script defer src="./static/js/teaser-explorer.js"></script>
+  <script defer src="./static/js/results.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#overview">Skip to content</a>
+
+  <header class="publication-header">
+    <div class="page-container">
+      <h1 class="publication-title">
+        Neural Fidelity Calibration
+        <span class="publication-subtitle">for Informative Sim-to-Real Adaptation</span>
+      </h1>
+      <figure class="publication-teaser">
+        <div class="teaser-comparison">
+          <video class="teaser-real" data-teaser-real controls muted loop playsinline preload="none" poster="./static/images/teaser-snow.jpg" width="720" height="720" aria-label="High-fidelity visualization of a Jackal navigating uneven snow">
+            <source src="./static/videos/web/teaser-snow.mp4" type="video/mp4">
+          </video>
+          <div class="teaser-simulations">
+            <button class="teaser-preview" type="button" data-explore aria-controls="teaser-explorer" aria-label="Real-to-Sim via NFC: explore all eight simulation terrains" disabled>
+              <img src="./static/images/teaser-simulations.jpg" width="1440" height="720" alt="Eight simulation terrains with open-frame Jackals, distinct red front-left tires, and dashed snow grids.">
+              <span class="teaser-preview-action" hidden>Real-to-Sim via NFC <span aria-hidden="true">↗</span></span>
+            </button>
+            <div class="teaser-explorer" id="teaser-explorer" hidden>
+              <div class="viewer-viewport">
+                <p class="viewer-status" role="status" hidden></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="viewer-toolbar" hidden>
+          <button type="button" data-follow aria-pressed="true">Follow robots</button>
+          <button type="button" data-whole>Whole terrains</button>
+          <button type="button" data-pause aria-pressed="false">Pause</button>
+          <button type="button" data-close aria-label="Close 3D view">Close</button>
+        </div>
+        <figcaption>
+          <span class="teaser-legend">Axle impairment <span class="legend-endpoint">Lower</span><span class="axle-color-scale" aria-hidden="true"></span><span class="legend-endpoint">Higher</span></span>
+          <span>Δh: sampled snow depth</span>
+        </figcaption>
+      </figure>
+      <p class="publication-authors" aria-label="Authors">
+        <a href="https://www.youwei-yu.com/" target="_blank" rel="noopener">Youwei Yu</a>
+        <a href="https://vail-robotics.net/pages/lantaoliu" target="_blank" rel="noopener">Lantao Liu</a>
+      </p>
+      <p class="publication-affiliation">Indiana University</p>
+      <div class="publication-links" aria-label="Research resources">
+        <a class="resource-link is-primary" href="https://arxiv.org/abs/2504.08604"><i class="fas fa-file-alt" aria-hidden="true"></i><span>Paper</span></a>
+        <a class="resource-link is-primary" href="https://youtu.be/vZ5s7hmKqtw"><i class="fab fa-youtube" aria-hidden="true"></i><span>Video</span></a>
+        <a class="resource-link is-primary" href="https://github.com/youwyu/NFC"><i class="fab fa-github" aria-hidden="true"></i><span>Code</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="paper-section overview-section" id="overview" aria-labelledby="overview-title">
+      <div class="page-container">
+        <h2 id="overview-title">Every simulator has limits. Can robots learn to correct them online?</h2>
+        <div class="overview-tabs" aria-label="About Neural Fidelity Calibration" hidden>
+          <button type="button" id="summary-tab" aria-controls="summary-panel">Overview</button>
+          <button type="button" id="method-tab" aria-controls="method-panel">How it works</button>
+        </div>
+
+        <div class="explanation-panel" id="summary-panel">
+          <div class="overview-copy">
+            <p><strong>Correct parameters can still produce the wrong world.</strong> Even perfect mass and friction estimates cannot fix missing physics or a mistaken terrain map. Snow can look like firm ground yet compress under the robot. A policy improved in that simulation may still fail in reality.</p>
+            <p><strong>Our idea: jointly calibrate physics and learn what it misses.</strong> NFC infers physical parameters together with <em>residual fidelity</em>: corrections to motion and perceived terrain. Conditioned on recent robot experience, a diffusion model samples these quantities jointly, capturing uncertainty over plausible simulated worlds in which to fine-tune the policy.</p>
+            <p><strong>The residual makes a measurable difference.</strong> On rough real-world terrain with a broken front-left wheel axle, PPO achieves 25% success without NFC, 53% with parameter calibration alone, and <strong class="result-highlight">72% with full NFC</strong>.</p>
+          </div>
+        </div>
+
+        <div class="explanation-panel" id="method-panel">
+          <figure class="method-figure">
+            <a class="figure-link" href="./static/images/system.png" target="_blank" rel="noopener" aria-label="Open the NFC system diagram at full resolution in a new tab">
+              <img src="./static/images/system.png" width="8850" height="3086" loading="lazy" alt="NFC adaptation loop: infer residual dynamics and environment corrections, calibrate simulator physics, execute the policy in reality, and trigger adaptation when an anomaly is detected.">
+            </a>
+            <figcaption>Calibrate what the simulator can explain. Learn the residual of what it cannot.</figcaption>
+          </figure>
+          <ol class="method-steps">
+            <li>
+              <h3>Calibrate the physics</h3>
+              <p>Use the robot’s recent trajectory to infer physical parameters, such as wheel friction and damping, with a conditional diffusion model.</p>
+            </li>
+            <li>
+              <h3>Account for the residual</h3>
+              <p>Jointly infer unmodeled motion and terrain corrections in a compact latent space, capturing uncertainty beyond simulator parameters.</p>
+            </li>
+            <li>
+              <h3>Adapt when needed</h3>
+              <p>When an anomaly is detected, fine-tune the policy in sampled simulation domains. Refine NFC sequentially as new experience arrives.</p>
+            </li>
+          </ol>
+          <p class="method-note"><strong>When uncertainty is high,</strong> a learned “hallucination” policy adjusts the spread of simulated domains to support policy improvement. It acts only in simulation.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="paper-section results-section" id="results" aria-labelledby="results-title">
+      <div class="page-container">
+        <h2 id="results-title">Neural Fidelity Calibration Results</h2>
+        <div class="results-explorer" hidden>
+          <div class="results-toolbar">
+            <div class="results-tabs" role="tablist" aria-label="Result environment">
+              <button type="button" id="results-flat-tab" role="tab" aria-selected="true" aria-controls="results-grid" data-results-environment="flat">
+                <img src="./static/images/results-environments/flat.svg" width="120" height="68" alt="" aria-hidden="true">
+                <span>Flat</span>
+              </button>
+              <button type="button" id="results-rough-tab" role="tab" aria-selected="false" aria-controls="results-grid" data-results-environment="rough" tabindex="-1">
+                <img src="./static/images/results-environments/rough.svg" width="120" height="68" alt="" aria-hidden="true">
+                <span>Rough</span>
+              </button>
+            </div>
+          </div>
+          <p data-results-status role="status">Loading results…</p>
+          <div class="results-grid" id="results-grid" role="tabpanel" aria-labelledby="results-flat-tab"></div>
+          <div class="results-legend" hidden>
+            <span class="results-belief">Belief <span>Low</span><span class="belief-color-scale" aria-hidden="true"></span><span>High</span></span>
+            <span><span class="truth-marker" aria-hidden="true">×</span> Ground truth</span>
+            <span><span class="mean-marker" aria-hidden="true">+</span> Posterior mean</span>
+          </div>
+        </div>
+        <dialog class="results-dialog" aria-labelledby="results-detail-title">
+          <div class="results-dialog-heading">
+            <h3 id="results-detail-title" data-results-title></h3>
+            <button type="button" data-results-close aria-label="Close posterior comparison">Close</button>
+          </div>
+          <div class="results-comparison"></div>
+          <p class="results-detail-note" data-results-detail-note></p>
+        </dialog>
+        <noscript><p class="figure-note">Enable JavaScript to explore the posterior samples.</p></noscript>
+      </div>
+    </section>
+
+    <section class="paper-section experiments-section" id="experiments" aria-labelledby="experiments-title">
+      <div class="page-container">
+        <div class="section-heading">
+          <h2 id="experiments-title">Sim-to-Real Adaptation Experiments</h2>
+          <p>The front left wheel axle is broken in every experiment.</p>
+        </div>
+        <div class="experiment-grid">
+          <figure class="experiment">
+            <video poster="./static/images/video-posters/lab.jpg" controls muted playsinline preload="none" width="1280" height="720" aria-label="Sim-to-real adaptation: Lab surface">
+              <source src="./static/videos/web/lab.mp4" type="video/mp4">
+              <a href="./static/videos/Front Left Wheel Axle Broken.mp4">Watch the lab surface experiment</a>.
+            </video>
+            <figcaption>Lab surface</figcaption>
+          </figure>
+          <figure class="experiment">
+            <video poster="./static/images/video-posters/lab-diverse.jpg" controls muted playsinline preload="none" width="1280" height="720" aria-label="Sim-to-real adaptation: Diverse lab surfaces">
+              <source src="./static/videos/web/lab-diverse.mp4" type="video/mp4">
+              <a href="./static/videos/Front Left Wheel Axle Broken on Diverse Lab Surfaces.mp4">Watch the diverse lab surfaces experiment</a>.
+            </video>
+            <figcaption>Diverse lab surfaces</figcaption>
+          </figure>
+          <figure class="experiment">
+            <video poster="./static/images/video-posters/lab-rock.jpg" controls muted playsinline preload="none" width="1280" height="720" aria-label="Sim-to-real adaptation: Loose rock &amp; diverse lab surfaces">
+              <source src="./static/videos/web/lab-rock.mp4" type="video/mp4">
+              <a href="./static/videos/Front Left Wheel Axle Broken with Rock on Diverse Lab Surfaces.mp4">Watch the loose rock &amp; diverse lab surfaces experiment</a>.
+            </video>
+            <figcaption>Loose rock &amp; diverse lab surfaces</figcaption>
+          </figure>
+          <figure class="experiment">
+            <video poster="./static/images/video-posters/snow.jpg" controls muted playsinline preload="none" width="1280" height="720" aria-label="Sim-to-real adaptation: Wet grass &amp; snowy terrain">
+              <source src="./static/videos/web/snow.mp4" type="video/mp4">
+              <a href="./static/videos/Front Left Wheel Axle Broken on Wet Grass and Snowy Terrain.mp4">Watch the wet grass &amp; snowy terrain experiment</a>.
+            </video>
+            <figcaption>Wet grass &amp; snowy terrain</figcaption>
+          </figure>
+          <figure class="experiment">
+            <video poster="./static/images/video-posters/snow-elevated.jpg" controls muted playsinline preload="none" width="1280" height="720" aria-label="Sim-to-real adaptation: Elevated wet grass &amp; snowy terrain">
+              <source src="./static/videos/web/snow-elevated.mp4" type="video/mp4">
+              <a href="./static/videos/Front Left Wheel Axle Broken on Elevated Wet Grass and Snowy Terrain.mp4">Watch the elevated wet grass &amp; snowy terrain experiment</a>.
+            </video>
+            <figcaption>Elevated wet grass &amp; snowy terrain</figcaption>
+          </figure>
+          <figure class="experiment">
+            <video poster="./static/images/video-posters/forest.jpg" controls muted playsinline preload="none" width="1280" height="720" aria-label="Sim-to-real adaptation: Muddy &amp; snowy forest">
+              <source src="./static/videos/web/forest.mp4" type="video/mp4">
+              <a href="./static/videos/Front Left Wheel Axle Broken in Muddy and Snowy Forest.mp4">Watch the muddy &amp; snowy forest experiment</a>.
+            </video>
+            <figcaption>Muddy &amp; snowy forest</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Page template borrowed from <a href="https://nerfies.github.io/">Nerfies</a>.</p>
+  </footer>
+</body>
+</html>
