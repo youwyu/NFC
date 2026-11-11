@@ -1,3 +1,8 @@
+/* Title and names use the regular Google Sans face only, exactly as the QOED page loads it
+   (its 600 weight is then rendered the same way). */
+@font-face { font-family: 'Google Sans Regular'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url(https://fonts.gstatic.com/s/googlesans/v76/4Ua_rENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RFD48TE63OOYKtrwEIJllpyk.woff2) format('woff2'); }
+
 :root {
   --ink: #29282c;
   --muted: #68656e;
@@ -29,20 +34,18 @@ figure { margin: 0; }
 .publication-header { padding: 44px 0 0; text-align: center; }
 .publication-title {
   margin: 0;
-  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+  font-family: 'Google Sans Regular', 'Google Sans', sans-serif;
   font-size: clamp(2rem, 4.5vw, 3rem);
-  font-weight: 700;
-  letter-spacing: -0.045em;
-  line-height: 1.15;
+  font-weight: 600;
+  line-height: 1.125;
   text-wrap: balance;
 }
 .publication-subtitle {
   display: block;
   margin-top: 14px;
-  font-size: clamp(1.2rem, 2.8vw, 1.9rem);
-  font-weight: 400;
-  letter-spacing: -0.025em;
-  line-height: 1.35;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 600;
+  line-height: 1.125;
 }
 .publication-teaser { margin: 24px auto 18px; }
 .publication-teaser img { display: block; width: 100%; height: auto; }
@@ -50,9 +53,13 @@ figure { margin: 0; }
 .teaser-legend { display: inline-flex; align-items: center; gap: 8px; }
 .legend-endpoint { font-size: 11px; }
 .axle-color-scale { display: inline-block; width: 68px; height: 8px; border-radius: 2px; background: linear-gradient(to right, #edb0a9, #b5484b, #6e1427); }
-.publication-authors { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 28px; font-size: 20px; line-height: 1.5; }
+.publication-authors { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 28px; font-family: 'Google Sans Regular', 'Google Sans', sans-serif; font-size: 20px; line-height: 1.5; }
 .publication-authors a { color: #000; }
-.publication-affiliation { margin: 4px 0 16px; color: #000; font-size: 16px; }
+.publication-affiliation { margin: 4px 0 0; color: #000; font-family: 'Google Sans Regular', 'Google Sans', sans-serif; font-size: 20px; }
+/* venue line as on the QOED page (Bulma title is-4, Google Sans, blue) */
+.publication-venue { margin: 16px 0 20px; font-family: 'Google Sans Regular', 'Google Sans', sans-serif; font-size: 1.5rem; font-weight: 600; line-height: 1.125; }
+.publication-venue a { color: #0F4BEA; }
+.publication-venue a:hover { color: #0F4BEA; text-decoration: underline; }
 .publication-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
 .resource-link {
   display: inline-flex;
